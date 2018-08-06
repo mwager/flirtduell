@@ -1,26 +1,43 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>{{ 'LIST_MASTER_TITLE' | translate }}</ion-title>
+    <ion-title>Swipe game</ion-title>
 
-    <ion-buttons end>
-      <button ion-button icon-only (click)="addItem()">
+    <!-- <ion-buttons end>
+      <button ion-button icon-only> < ! --  (click)="addItem()" - - >
         <ion-icon name="add"></ion-icon>
       </button>
-    </ion-buttons>
+    </ion-buttons> -->
   </ion-navbar>
 
 </ion-header>
 
 <ion-content>
 
-  <ion-list>
-    <ion-item-sliding *ngFor="let item of currentItems">
+  <div class="cardcontainer list">
+    <ul class="cardlist">
+      <li *ngFor="let item of currentItems; let idx = index" class="mycard {{idx == 0 ? 'current' : ''}}">
+
+        <ion-card (swipe)="swipeEvent($event)">
+          <img [src]="item.profilePic" />
+          <h2>{{item.name}}</h2>
+        </ion-card>
+
+      </li>
+    </ul>
+
+    <button class="but-nope">X</button>
+    <button class="but-yay">✔</button>
+  </div>
+
+
+  <!-- <ion-list>
+    <ion-item-sliding >
       <button ion-item (click)="openItem(item)">
         <ion-avatar item-start>
-          <img [src]="item.profilePic" />
+
         </ion-avatar>
-        <h2>{{item.name}}</h2>
+
         <p>{{item.about}}</p>
         <ion-note item-end *ngIf="item.note">{{item.note}}</ion-note>
       </button>
@@ -31,5 +48,5 @@
         </button>
       </ion-item-options>
     </ion-item-sliding>
-  </ion-list>
+  </ion-list> -->
 </ion-content>

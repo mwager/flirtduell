@@ -14,12 +14,64 @@ export class ListMasterPage {
 
   constructor(public navCtrl: NavController, public items: Items, public modalCtrl: ModalController) {
     this.currentItems = this.items.query();
+
+    document.body.addEventListener(
+      'animationend', this.animationdone
+    );
   }
 
   /**
    * The view loaded, let's query our items for the list
    */
   ionViewDidLoad() {
+  }
+
+  swipeEvent(event) {
+    if (event.direction === 2) { // left
+      document.querySelector('.cardcontainer').classList.add('nope');
+
+    }
+    else if (event.direction === 4) { // right
+      document.querySelector('.cardcontainer').classList.add('yes');
+    }
+  }
+
+  animationdone(ev) {
+    // get the container
+    var origin = ev.target.parentNode.parentNode;
+
+    // remove the appropriate class
+    // depending on the animation name
+    if (ev.animationName === 'yay') {
+      origin.classList.remove('yes');
+    }
+    if (ev.animationName === 'nope') {
+      origin.classList.remove('nope');
+    }
+
+    // if any of the card events have
+    // ended…
+    if (ev.animationName === 'nope' ||
+        ev.animationName === 'yay') {
+
+      // remove the first card in the element
+      origin.querySelector('.current').remove();
+
+      // if there are no cards left, do nothing
+      if (!origin.querySelector('.mycard')) {
+        // no more cards left -
+        // TODO other functionality
+        console.log("NO MORE CARDS LEFT")
+
+      } else {
+
+        // otherwise shift the 'current' class to
+        // the next card
+        origin.querySelector('.mycard')
+        .classList
+        .add('current');
+      }
+    }
   }
 
   /**

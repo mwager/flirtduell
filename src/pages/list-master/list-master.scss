@@ -1,3 +1,55 @@
 page-list-master {
 
+  .mycard {
+    // width: 150px;
+    // height: 200px;
+    display: block;
+    // background: #666;
+    transform-origin: 50% 99%;
+  }
+
+  .cardcontainer.yes .mycard {
+    animation: yay 0.7s ease-out;
+  }
+  .cardcontainer.nope .mycard {
+    animation: nope 0.7s ease-out;
+  }
+  .cardlist {
+    list-style: none;
+
+    li {
+      list-style: none;
+    }
+
+    margin: 0;
+    padding: 0px;
+  }
+  .list .mycard {
+    display: none;
+  }
+  .list .current {
+    display: block;
+  }
+
+  @keyframes yay {
+    from {
+      transform: rotate(0deg);
+      opacity: 1;
+    }
+    to {
+      transform: rotate(40deg) translateY(-80px);
+      opacity: 0;
+    }
+  }
+
+  @keyframes nope {
+    from {
+      transform: rotate(0deg);
+      opacity: 1;
+    }
+    to {
+      transform: rotate(-40deg) translateY(-80px);
+      opacity: 0;
+    }
+  }
 }

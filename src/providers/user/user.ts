@@ -3,6 +3,7 @@ import 'rxjs/add/operator/toPromise';
 import { Injectable } from '@angular/core';
 
 import { Api } from '../api/api';
+declare var firebase;
 
 /**
  * Most apps have the concept of a User. This is a simple provider
@@ -34,19 +35,31 @@ export class User {
    * the user entered on the form.
    */
   login(accountInfo: any) {
-    let seq = this.api.post('login', accountInfo).share();
-
-    seq.subscribe((res: any) => {
-      // If the API returned a successful response, mark the user as logged in
-      if (res.status == 'success') {
+    return new Promise((resolve, reject) => {
+      firebase.auth().signInWithEmailAndPassword(accountInfo.email, accountInfo.password)
+      .then((res) => {
         this._loggedIn(res);
-      } else {
-      }
-    }, err => {
-      console.error('ERROR', err);
-    });
+        resolve();
+      })
+      .catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // ...
+        console.error("?", error)
+        reject(error);
+      });
 
-    return seq;
+      // firebase.auth().createUserWithEmailAndPassword('bob@mwager.de', '123456')
+      // .catch(function(error) {
+      //   // Handle Errors here.
+      //   var errorCode = error.code;
+      //   var errorMessage = error.message;
+      //   // ...
+      //   console.error("?", error)
+      //   reject(error)
+      // });
+    });
   }
 
   /**
