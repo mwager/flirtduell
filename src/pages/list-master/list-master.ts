@@ -28,12 +28,19 @@ export class ListMasterPage {
 
   swipeEvent(event) {
     if (event.direction === 2) { // left
-      document.querySelector('.cardcontainer').classList.add('nope');
-
+      this.swipeLeft();
     }
     else if (event.direction === 4) { // right
-      document.querySelector('.cardcontainer').classList.add('yes');
+      this.swipeRight();
     }
+  }
+
+  swipeLeft() {
+    document.querySelector('.cardcontainer').classList.add('nope');
+  }
+
+  swipeRight() {
+    document.querySelector('.cardcontainer').classList.add('yes');
   }
 
   animationdone(ev) {

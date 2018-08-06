@@ -13,7 +13,6 @@
 </ion-header>
 
 <ion-content>
-
   <div class="cardcontainer list">
     <ul class="cardlist">
       <li *ngFor="let item of currentItems; let idx = index" class="mycard {{idx == 0 ? 'current' : ''}}">
@@ -22,12 +21,18 @@
           <img [src]="item.profilePic" />
           <h2>{{item.name}}</h2>
         </ion-card>
-
       </li>
     </ul>
 
-    <button class="but-nope">X</button>
-    <button class="but-yay">✔</button>
+    <div class="swipe-buttons">
+      <button ion-button icon-only (click)="swipeLeft()">
+        <ion-icon name="close-circle"></ion-icon>
+      </button>
+
+      <button ion-button icon-only (click)="swipeRight()">
+        <ion-icon name="checkmark-circle"></ion-icon>
+      </button>
+    </div>
   </div>
 
 
