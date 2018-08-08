@@ -15,22 +15,43 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-  <!-- cordova.js required for cordova apps (remove if not needed) -->
-  <script src="cordova.js"></script>
+  <noscript>Please enable javascript, sweety ;-)</noscript>
 
-  <!-- un-comment this code to enable service worker
+  <!-- GO PWA!
+    https://blog.ionicframework.com/how-to-make-pwas-with-ionic/
+ -->
+  <!-- cordova.js required for cordova apps (remove if not needed) -->
+  <!-- <script src="cordova.js"></script> -->
+
+  <!-- un-comment this code to enable service worker -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
         .then(() => console.log('service worker installed'))
-        .catch(err => console.error('Error', err));
+        .catch(err => console.error('Error service worker: ', err));
     }
-  </script>-->
+  </script>
 
   <link href="build/main.css" rel="stylesheet">
 
 </head>
 <body>
+
+  <script>
+    // TODO: see this: https://love2dev.com/blog/beforeinstallprompt/
+    console.log("registering beforeinstallprompt....")
+
+    window.addEventListener("beforeinstallprompt", function(e) {
+      e.prompt();
+
+
+      // log the platforms provided as options in an install prompt
+      console.log('e.platforms', e.platforms); // e.g., ["web", "android", "windows"]
+      e.userChoice.then(function(outcome) {
+        console.log("outcome", outcome); // either "accepted" or "dismissed"
+      }, handleError);
+    });
+  </script>
 
   <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>
 
