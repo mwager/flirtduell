@@ -36,8 +36,9 @@ export class LoginPage {
   doLogin() {
     this.user.login(this.account)
     // see app.component
-    // .then((resp) => {
-    //   this.navCtrl.push(MainPage);
-    // });
+    .then((resp) => {
+      // this.navCtrl.push(MainPage);
+      this.navCtrl.setRoot('TabsPage');
+    });
   }
 }

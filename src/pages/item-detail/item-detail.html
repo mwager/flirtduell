@@ -1,18 +1,58 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>{{ item.name }}</ion-title>
+    <ion-title>Quiz with {{ enemyUser.name }}
+    </ion-title>
   </ion-navbar>
-
 </ion-header>
 
 
 <ion-content>
-  <div class="item-profile" text-center #profilePic [style.background-image]="'url(' + item.profilePic + ')'">
+
+  <div *ngIf="question !== null">
+    <p style="padding: 10px; background: grey">{{question}}</p>
+
+    <ion-list>
+      <button ion-item *ngFor="let answer of answers"
+        (click)="selectAnswer(answer)">
+        {{answer.text}}
+      </button>
+    </ion-list>
   </div>
 
-  <div class="item-detail" padding>
-    <h2>{{item.name}}</h2>
-    <p>{{item.about}}</p>
+  <div *ngIf="question === null">
+    <p>Correct answers: {{score.correctCount}} of 3</p>
+
+    <p *ngIf="enemyScore">{{enemyUser.name}} has {{enemyScore.correctCount}} of 3</p>
+  </div>
+
+  <!-- wenn beide fertig sind -->
+  <div *ngIf="enemyScore && question === null">
+
+    <div *ngIf="isAlice">
+      <p *ngIf="score.correctCount > enemyScore.correctCount">you won, wanna chat with that looser?</p>
+
+      <p *ngIf="score.correctCount < enemyScore.correctCount">bob won ;) start chat?</p>
+
+      <p *ngIf="score.correctCount === enemyScore.correctCount">undecided!
+        <button ion-button (click)="startNewGame()">New game</button>
+      </p>
+    </div>
+
+
+    <div *ngIf="isBob">
+      <pre>
+        <p *ngIf="score.correctCount > enemyScore.correctCount">you won, start chat?</p>
+
+        <p *ngIf="score.correctCount < enemyScore.correctCount">you are a looser, new game?</p>
+
+        <p *ngIf="score.correctCount === enemyScore.correctCount">undecided!
+          <button ion-button (click)="startNewGame()">New game</button>
+        </p>
+      </pre>
+    </div>
+
+
+
   </div>
 </ion-content>

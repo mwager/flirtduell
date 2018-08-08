@@ -17,7 +17,7 @@ export class ListMasterPage {
   unsubscribeLikes: any;
 
   constructor(
-    private userService: User,
+    // private userService: User,
     public alertCtrl: AlertController,
     public navCtrl: NavController,
     public items: Items,
@@ -82,6 +82,13 @@ export class ListMasterPage {
     if (this.unsubscribeLikes) {
       this.unsubscribeLikes();
     }
+
+    try {
+      document.body.removeEventListener(
+        'animationend', () => {}
+      );
+    }
+    catch(e) {}
   }
 
   swipeEvent(event) {
@@ -123,9 +130,7 @@ export class ListMasterPage {
       const curr = origin.querySelector('.current');
       const isReal = curr.classList.contains('isreal');
 
-      if (curr) {
-        curr.remove();
-      }
+      curr.remove();
 
       // if there are no cards left, do nothing
       if (!origin.querySelector('.mycard')) {
@@ -160,8 +165,6 @@ export class ListMasterPage {
   }
 
   displayMatchToast() {
-    this.userService.saveMatch();
-
     let name;
     const user = firebase.auth().currentUser;
 

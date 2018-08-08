@@ -74,22 +74,42 @@ export class MyApp {
   }
 
   clearDatabase() {
-    localStorage.removeItem('match')
-
     const db = firebase.firestore();
     const promises = []
-    return db.collection('likes').get()
-    .then((docs) => {
-      docs.forEach((doc) => {
-        promises.push(
-          db.collection('likes')
-          .doc(doc.id)
-          .delete()
-        )
-      });
 
-      return Promise.all(promises)
-    })
+    const ps = [];
+
+    ps.push(
+      db.collection('likes').get()
+      .then((docs) => {
+        docs.forEach((doc) => {
+          promises.push(
+            db.collection('likes')
+            .doc(doc.id)
+            .delete()
+          )
+        });
+
+        return Promise.all(promises)
+      })
+    )
+
+    ps.push(
+      db.collection('quiz').get()
+      .then((docs) => {
+        docs.forEach((doc) => {
+          promises.push(
+            db.collection('quiz')
+            .doc(doc.id)
+            .delete()
+          )
+        });
+
+        return Promise.all(promises)
+      })
+    )
+
+    return Promise.all(ps)
   }
 
   initTranslate() {

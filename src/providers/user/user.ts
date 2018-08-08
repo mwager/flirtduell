@@ -62,10 +62,6 @@ export class User {
     });
   }
 
-  setMatch() {
-    localStorage.setItem('match', true)
-  }
-
   // profilePic(userId) {
   //   if (!this._user) {
   //     return null;
