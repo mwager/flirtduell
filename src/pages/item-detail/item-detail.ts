@@ -2,6 +2,7 @@ import { Component, NgZone } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 
 import { Items } from '../../providers';
+declare var firebase;
 
 // more? https://quizduell-antworten.de.tl/Comics.htm
 const question1 = 'In welcher Serie versuchen 2 Labormäuse jede Nacht die Weltherrschaft zu übernehmen, was letztlich doch immer scheitert?';
@@ -39,9 +40,7 @@ export class ItemDetailPage {
   answers: any;
   index = 0;
   enemyScore: any;
-  score = {
-    correctCount: 0
-  };
+  score: any;
   unsubscribeQuiz: any;
 
   isAlice = false;
@@ -49,13 +48,18 @@ export class ItemDetailPage {
 
   constructor(private zone: NgZone, public toastCtrl: ToastController, public navCtrl: NavController, navParams: NavParams, items: Items) {
     this.enemyUser = navParams.get('item'); // || items.defaultItem;
+    this.score = {
+      correctCount: 0
+    };
 
     this.question = question1;
     this.answers = answers1;
   }
 
   startNewGame() {
-    this.score = {};
+    this.score = {
+      correctCount: 0
+    };
     this.enemyScore = {};
     this.question = question1;
     this.answers = answers1;
