@@ -62,6 +62,35 @@ export class User {
     });
   }
 
+  setMatch() {
+    localStorage.setItem('match', true)
+  }
+
+  // profilePic(userId) {
+  //   if (!this._user) {
+  //     return null;
+  //   }
+
+  //   if (!userId === 'nHrzjWOGvDM2QeXjUTOZVsXLnJ82') { // alice
+  //     return 'assets/img/speakers/alice.png';
+  //   }
+  //   if (!userId === 'uUiwVTzQ5RMJca9s4x7eHK0XLbC3') { // bob
+  //     return 'assets/img/speakers/bob.png';
+  //   }
+  // }
+
+
+
+
+
+
+
+
+
+
+
+
+
   /**
    * Send a POST request to our signup endpoint with the data
    * the user entered on the form.

@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 import { Item } from '../../models/item';
 import { Items } from '../../providers';
+declare var firebase;
 
 @IonicPage()
 @Component({
@@ -13,26 +14,49 @@ export class SearchPage {
 
   currentItems: any = [];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public items: Items) { }
+  constructor(public navCtrl: NavController, public navParams: NavParams, public items: Items) {
+    const user = firebase.auth().currentUser;
 
-  /**
-   * Perform a service for the proper items.
-   */
-  getItems(ev) {
-    let val = ev.target.value;
-    if (!val || !val.trim()) {
-      this.currentItems = [];
+    if (!user) {
       return;
     }
-    this.currentItems = this.items.query({
-      name: val
-    });
+
+    // if we are alice, insert bob and ViceVersa
+    if (user && (user.uid === 'nHrzjWOGvDM2QeXjUTOZVsXLnJ82')) {
+      this.currentItems=[{
+        "name": "Bob",
+        "profilePic": "assets/img/speakers/bob.png",
+        isReal: true
+      }]
+    }
+
+    if (user && (user.uid === 'uUiwVTzQ5RMJca9s4x7eHK0XLbC3')) {
+      this.currentItems=[{
+        "name": "Alice",
+        "profilePic": "assets/img/speakers/alice.png",
+        isReal: true
+      }]
+    }
   }
+
+  // /**
+  //  * Perform a service for the proper items.
+  //  */
+  // getItems(ev) {
+  //   let val = ev.target.value;
+  //   if (!val || !val.trim()) {
+  //     this.currentItems = [];
+  //     return;
+  //   }
+  //   this.currentItems = this.items.query({
+  //     name: val
+  //   });
+  // }
 
   /**
    * Navigate to the detail page for this item.
    */
-  openItem(item: Item) {
+  startQuiz(item: Item) {
     this.navCtrl.push('ItemDetailPage', {
       item: item
     });

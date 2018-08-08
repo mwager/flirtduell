@@ -15,11 +15,12 @@
 <ion-content>
   <div class="cardcontainer list">
     <ul class="cardlist">
-      <li *ngFor="let item of currentItems; let idx = index" class="mycard {{idx == 0 ? 'current' : ''}}">
+      <li *ngFor="let user of currentItems; let idx = index"
+        class="mycard {{idx == 0 ? 'current' : ''}} {{user.isReal ? 'isreal' : ''}}">
 
         <ion-card (swipe)="swipeEvent($event)">
-          <img [src]="item.profilePic" />
-          <h2>{{item.name}}</h2>
+          <img [src]="user.profilePic" />
+          <h2>{{user.name}}</h2>
         </ion-card>
       </li>
     </ul>

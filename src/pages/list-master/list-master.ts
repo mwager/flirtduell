@@ -1,8 +1,11 @@
+import { User } from './../../providers/user/user';
+import { SearchPage } from './../search/search';
 import { Component } from '@angular/core';
-import { IonicPage, ModalController, NavController } from 'ionic-angular';
+import { IonicPage, ModalController, NavController, AlertController } from 'ionic-angular';
 
 import { Item } from '../../models/item';
 import { Items } from '../../providers';
+declare var firebase;
 
 @IonicPage()
 @Component({
@@ -11,19 +14,74 @@ import { Items } from '../../providers';
 })
 export class ListMasterPage {
   currentItems: Item[];
+  unsubscribeLikes: any;
 
-  constructor(public navCtrl: NavController, public items: Items, public modalCtrl: ModalController) {
+  constructor(
+    private userService: User,
+    public alertCtrl: AlertController,
+    public navCtrl: NavController,
+    public items: Items,
+    public modalCtrl: ModalController
+  ) {
     this.currentItems = this.items.query();
-
-    document.body.addEventListener(
-      'animationend', this.animationdone
-    );
   }
 
   /**
    * The view loaded, let's query our items for the list
    */
   ionViewDidLoad() {
+    const user = firebase.auth().currentUser;
+
+    if (!user) {
+      return;
+    }
+
+    // if we are alice, insert bob and ViceVersa
+    if (user && (user.uid === 'nHrzjWOGvDM2QeXjUTOZVsXLnJ82')) {
+      this.currentItems.splice(2, 0, {
+        "name": "Bob",
+        "profilePic": "assets/img/speakers/bob.png",
+        isReal: true
+      })
+    }
+
+    if (user && (user.uid === 'uUiwVTzQ5RMJca9s4x7eHK0XLbC3')) {
+      this.currentItems.splice(2, 0, {
+        "name": "Alice",
+        "profilePic": "assets/img/speakers/alice.png",
+        isReal: true
+      })
+    }
+
+    const handler = (ev) => {
+      this.animationdone(ev)
+    };
+    document.body.addEventListener(
+      'animationend', handler
+    );
+
+    const db = firebase.firestore();
+    this.unsubscribeLikes = db.collection("likes")
+    .onSnapshot((res) => {
+      if (res.docs.length === 2) {
+        this.displayMatchToast();
+        return;
+      }
+
+      res.docs.forEach((doc) => {
+        const user = firebase.auth().currentUser;
+
+        if (user.uid !== doc.id) {
+          console.log("GOT LIKE FROM USER ID! ", doc.id, doc.data());
+        }
+      });
+    });
+  }
+
+  ionViewWillLeave() {
+    if (this.unsubscribeLikes) {
+      this.unsubscribeLikes();
+    }
   }
 
   swipeEvent(event) {
@@ -45,7 +103,7 @@ export class ListMasterPage {
 
   animationdone(ev) {
     // get the container
-    var origin = ev.target.parentNode.parentNode;
+    var origin = document.querySelector('.cardcontainer'); // ev.target.parentNode.parentNode;
 
     // remove the appropriate class
     // depending on the animation name
@@ -62,7 +120,12 @@ export class ListMasterPage {
         ev.animationName === 'yay') {
 
       // remove the first card in the element
-      origin.querySelector('.current').remove();
+      const curr = origin.querySelector('.current');
+      const isReal = curr.classList.contains('isreal');
+
+      if (curr) {
+        curr.remove();
+      }
 
       // if there are no cards left, do nothing
       if (!origin.querySelector('.mycard')) {
@@ -71,14 +134,71 @@ export class ListMasterPage {
         console.log("NO MORE CARDS LEFT")
 
       } else {
-
         // otherwise shift the 'current' class to
         // the next card
         origin.querySelector('.mycard')
         .classList
         .add('current');
+
+        if (isReal)
+          this.sendLike();
       }
     }
+  }
+
+  sendLike() {
+    const user = firebase.auth().currentUser;
+    const db = firebase.firestore();
+
+    db.collection("likes").doc(user.uid)
+    .set({
+      email: user.email,
+      uid: user.uid
+    });
+
+    console.log('Like sent! from', user.email);
+  }
+
+  displayMatchToast() {
+    this.userService.saveMatch();
+
+    let name;
+    const user = firebase.auth().currentUser;
+
+    if (user && (user.uid === 'nHrzjWOGvDM2QeXjUTOZVsXLnJ82')) {
+      name = 'Bob'
+    }
+    else {
+      name = 'Alice'
+    }
+
+    // TODO: wanna start a quiz?
+    // oder nun matches wo anzeigen... siehe tinder - wir brauchen tabs mit matches?
+
+    let ctrl = this.alertCtrl.create({
+      title: 'New Match!',
+      subTitle: 'You got a new match with ' + name,
+      buttons: [
+        {
+          text: 'Keep playing',
+          role: 'cancel',
+          handler: data => {
+            console.log('Cancel clicked');
+          }
+        },
+
+        {
+          text: 'Start quiz',
+          handler: data => {
+            ctrl.dismiss()
+            .then(() => {
+              this.navCtrl.parent.select(1);
+            })
+          }
+        }
+      ]
+    });
+    ctrl.present();
   }
 
   /**

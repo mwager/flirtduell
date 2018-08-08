@@ -90,15 +90,11 @@ export class SettingsPage {
     });
   }
 
-  ngOnChanges() {
-    console.log('Ng All Changes');
-  }
+  // ngOnChanges() {
+  //   console.log('Ng All Changes');
+  // }
 
   signout() {
     firebase.auth().signOut();
-    this.navCtrl.setRoot('WelcomePage', {}, {
-      animate: true,
-      direction: 'forward'
-    });
   }
 }

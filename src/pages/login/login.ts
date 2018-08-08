@@ -35,8 +35,9 @@ export class LoginPage {
   // Attempt to login in through our User service
   doLogin() {
     this.user.login(this.account)
-    .then((resp) => {
-      this.navCtrl.push(MainPage);
-    });
+    // see app.component
+    // .then((resp) => {
+    //   this.navCtrl.push(MainPage);
+    // });
   }
 }

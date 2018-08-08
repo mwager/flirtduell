@@ -52,33 +52,50 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-
-      var user = firebase.auth().currentUser;
-      console.log("USER", user)
     });
+
     this.initTranslate();
+
+    firebase.auth().onAuthStateChanged((user: any) => {
+      console.log("onAuthStateChanged - user: ", user)
+
+      if (!user) {
+        this.nav.setRoot('WelcomePage');
+      }
+      else {
+        this.clearDatabase()
+        .then(() => {
+          console.log(">> DB CLEARED!!!!!!!!!");
+
+          this.nav.setRoot('TabsPage');
+        });
+      }
+    });
+  }
+
+  clearDatabase() {
+    localStorage.removeItem('match')
+
+    const db = firebase.firestore();
+    const promises = []
+    return db.collection('likes').get()
+    .then((docs) => {
+      docs.forEach((doc) => {
+        promises.push(
+          db.collection('likes')
+          .doc(doc.id)
+          .delete()
+        )
+      });
+
+      return Promise.all(promises)
+    })
   }
 
   initTranslate() {
     // Set the default language for translation strings, and the current language.
     this.translate.setDefaultLang('en');
-    const browserLang = this.translate.getBrowserLang();
-
-    if (browserLang) {
-      if (browserLang === 'zh') {
-        const browserCultureLang = this.translate.getBrowserCultureLang();
-
-        if (browserCultureLang.match(/-CN|CHS|Hans/i)) {
-          this.translate.use('zh-cmn-Hans');
-        } else if (browserCultureLang.match(/-TW|CHT|Hant/i)) {
-          this.translate.use('zh-cmn-Hant');
-        }
-      } else {
-        this.translate.use(this.translate.getBrowserLang());
-      }
-    } else {
-      this.translate.use('en'); // Set your language here
-    }
+    this.translate.use('en'); // Set your language here
 
     this.translate.get(['BACK_BUTTON_TEXT']).subscribe(values => {
       this.config.set('ios', 'backButtonText', values.BACK_BUTTON_TEXT);
