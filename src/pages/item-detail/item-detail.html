@@ -9,8 +9,22 @@
 
 <ion-content>
 
+  <!-- FIRST CAT SELECTION -->
+  <div *ngIf="isAlice && selectedCategory === null">
+    <ion-item>Select quiz category</ion-item>
+    <ion-list>
+      <ion-item (click)="categorySelected('comics')">Comics</ion-item>
+      <ion-item (click)="categorySelected('computergames')">Computergames</ion-item>
+      <ion-item (click)="categorySelected('food')">Food</ion-item>
+    </ion-list>
+  </div>
+
+  <div *ngIf="isBob && selectedCategory === null">
+    <p>Please wait until {{enemyUser.name}} has selected a category</p>
+  </div>
+
   <div *ngIf="question !== null">
-    <p style="padding: 10px; background: grey">{{question}}</p>
+    <p style="padding: 10px; background: #f3a5be; height: 60px">{{question}}</p>
 
     <ion-list>
       <button ion-item *ngFor="let answer of answers"
@@ -20,8 +34,10 @@
     </ion-list>
   </div>
 
-  <div *ngIf="question === null">
+  <div *ngIf="question === null && selectedCategory !== null">
     <p>Correct answers: {{score.correctCount}} of 3</p>
+
+    <button ion-button (click)="startNewGame()">New game</button>
 
     <p *ngIf="enemyScore">{{enemyUser.name}} has {{enemyScore.correctCount}} of 3</p>
   </div>
@@ -35,10 +51,8 @@
       <p *ngIf="score.correctCount < enemyScore.correctCount">bob won ;) start chat?</p>
 
       <p *ngIf="score.correctCount === enemyScore.correctCount">undecided!
-        <button ion-button (click)="startNewGame()">New game</button>
       </p>
     </div>
-
 
     <div *ngIf="isBob">
       <pre>
@@ -47,12 +61,8 @@
         <p *ngIf="score.correctCount < enemyScore.correctCount">you are a looser, new game?</p>
 
         <p *ngIf="score.correctCount === enemyScore.correctCount">undecided!
-          <button ion-button (click)="startNewGame()">New game</button>
         </p>
       </pre>
     </div>
-
-
-
   </div>
 </ion-content>
