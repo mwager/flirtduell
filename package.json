@@ -7,7 +7,8 @@
     "start": "ionic-app-scripts serve",
     "clean": "ionic-app-scripts clean",
     "build": "ionic-app-scripts build",
-    "lint": "ionic-app-scripts lint"
+    "lint": "ionic-app-scripts lint",
+    "deploy": "npm run build && node ./deploy"
   },
   "dependencies": {
     "@angular/animations": "5.2.11",
@@ -34,6 +35,7 @@
   },
   "devDependencies": {
     "@ionic/app-scripts": "3.1.11",
+    "ftp-deploy": "^2.1.2",
     "typescript": "~2.6.2"
   },
   "description": "An Ionic project"
