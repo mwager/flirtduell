@@ -62,6 +62,35 @@ export class User {
     });
   }
 
+  clearDatabase() {
+    const db = firebase.firestore();
+    const promises = []
+
+    const ps = [];
+
+    // we only have ONE collection with docs for "likes", "quiz" and "chat"
+    ps.push(
+      db.collection('flirtduell').get()
+      .then((docs) => {
+        docs.forEach((doc) => {
+          promises.push(
+            db.collection('flirtduell')
+            .doc(doc.id)
+            .delete()
+          )
+        });
+
+        return Promise.all(promises)
+      })
+    )
+
+    return Promise.all(ps)
+    .then(() => {
+      console.log('DB DROPPED');
+    });
+  }
+
+
   // profilePic(userId) {
   //   if (!this._user) {
   //     return null;

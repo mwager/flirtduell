@@ -2,7 +2,7 @@ import { Component, ViewChild, ApplicationRef } from '@angular/core';
 import { IonicPage, NavController, Content } from 'ionic-angular';
 declare var firebase;
 
-const ROOM_KEY = 'demoroom';
+const ROOM_KEY = 'chats';
 
 @IonicPage()
 @Component({
@@ -25,9 +25,13 @@ export class ChatPage {
   constructor(public navCtrl: NavController, public applicationRef: ApplicationRef) { }
 
   sendMessage(e) {
+    if (!this.message) {
+      return;
+    }
+
     const db = firebase.firestore();
 
-    db.collection('chats')
+    db.collection('flirtduell')
     .doc(ROOM_KEY)
     .set({
       date: new Date().getTime(),
@@ -65,7 +69,7 @@ export class ChatPage {
       this.profilePic = "assets/img/speakers/alice.png";
     }
 
-    this.unsubscribeChat = db.collection('chats')
+    this.unsubscribeChat = db.collection('flirtduell')
     .doc(ROOM_KEY)
     .onSnapshot((res) => {
       const data = res.data();

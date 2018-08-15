@@ -1,3 +1,4 @@
+import { User } from './../../providers/user/user';
 import { ChatPage } from './../chat/chat';
 import { Component, NgZone, ApplicationRef } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
@@ -107,7 +108,15 @@ export class ItemDetailPage {
   isDebugDisplayed = true;
   dbDebugItems = [];
 
-  constructor(private zone: NgZone, public toastCtrl: ToastController, public navCtrl: NavController, navParams: NavParams, items: Items, public applicationRef: ApplicationRef) {
+  constructor(
+    private userService: User,
+    private zone: NgZone,
+    public toastCtrl: ToastController,
+    public navCtrl: NavController,
+    navParams: NavParams,
+    items: Items,
+    public applicationRef: ApplicationRef
+  ) {
     this.enemyUser = navParams.get('item'); // || items.defaultItem;
     this.score = {
       correctCount: 0
@@ -115,29 +124,31 @@ export class ItemDetailPage {
   }
 
   startNewGame() {
-    this.score = {
-      correctCount: 0
-    };
-    this.enemyScore = null;
-    this.selectedCategory = null;
-    this.question = null;
-    this.index = 0;
+    this.userService.clearDatabase()
+    .then(() => {
+      this.dbDebugItems = [];
 
-    const db = firebase.firestore();
-    db.collection('quiz').get()
-    .then((docs) => {
-      docs.forEach((doc) => {
-        db.collection('quiz')
-        .doc(doc.id)
-        .delete()
-      });
+      this.score = {
+        correctCount: 0
+      };
+      this.enemyScore = null;
+      this.selectedCategory = null;
+      this.question = null;
+      this.index = 0;
+
+      this.applicationRef.tick();
     });
-
-    this.dbDebugItems = [];
   }
 
   startChat() {
-    this.navCtrl.push(ChatPage);
+    this.navCtrl.push('ChatPage');
+
+    // tell the other user that chat was started!
+    const db = firebase.firestore();
+    const user = firebase.auth().currentUser;
+    db.collection('flirtduell')
+    .doc('quiz')
+    .set({chatStarted: true, uid: user.uid});
   }
 
   ionViewDidLoad() {
@@ -155,30 +166,35 @@ export class ItemDetailPage {
       this.isBob = true;
     }
 
-    this.unsubscribeQuiz = db.collection("quiz")
+    this.unsubscribeQuiz = db.collection('flirtduell')
+    .doc('quiz')
     .onSnapshot((res) => {
-      res.docs.forEach((doc) => {
-        // we log all to the view for debugging
-        this.dbDebugItems.push(users[doc.id] + ': ' + JSON.stringify(doc.data()));
-        console.log(this.dbDebugItems);
+      const data = res.data();
 
-        // wenn der datensatz von nem anderen user kommt
-        if (user.uid !== doc.id) {
-          console.log("GOT quiz score FROM USER ID! ", doc.id, doc.data());
+      if (!data) {
+        return;
+      }
 
-          this.zone.run(() => {
-            const data = doc.data();
+      // we log all to the view for debugging
+      this.dbDebugItems.push(users[data.uid] + ': ' + JSON.stringify(data));
 
-            if (data.categorySelected) { // alice has selected a category
-              this.selectedCategory = data.categorySelected;
-              this.setFirstQuestion();
-            }
-            else {
-              this.enemyScore = data;
-            }
-          });
-        }
-      });
+      // wenn der datensatz von nem anderen user kommt
+      if (user.uid !== data.uid) {
+        console.log("GOT quiz score FROM USER ID! ", data.uid, data);
+
+        this.zone.run(() => {
+          if (data.chatStarted) { // other user started the chat
+            this.navCtrl.push('ChatPage');
+          }
+          else if (data.categorySelected) { // alice has selected a category
+            this.selectedCategory = data.categorySelected;
+            this.setFirstQuestion();
+          }
+          else {
+            this.enemyScore = data;
+          }
+        });
+      }
     });
   }
 
@@ -194,8 +210,10 @@ export class ItemDetailPage {
 
     const db = firebase.firestore();
     const user = firebase.auth().currentUser;
-    db.collection("quiz").doc(user.uid)
-    .set({categorySelected: cat});
+
+    db.collection('flirtduell')
+    .doc('quiz')
+    .set({categorySelected: cat, uid: user.uid});
   }
 
   setFirstQuestion() {
@@ -241,7 +259,10 @@ export class ItemDetailPage {
       const db = firebase.firestore();
       const user = firebase.auth().currentUser;
 
-      db.collection("quiz").doc(user.uid)
+      this.score.uid = user.uid;
+
+      db.collection('flirtduell')
+      .doc('quiz')
       .set(this.score);
     }
   }

@@ -14,6 +14,9 @@ import { ChatPage } from './chat';
   ],
   exports: [
     ChatPage
+  ],
+  entryComponents: [
+    ChatPage
   ]
 })
 export class ChatPageModule { }

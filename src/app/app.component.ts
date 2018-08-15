@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Config, Nav, Platform } from 'ionic-angular';
 
 import { FirstRunPage } from '../pages';
-import { Settings } from '../providers';
+import { Settings, User } from '../providers';
 declare var firebase;
 
 @Component({
@@ -46,7 +46,15 @@ export class MyApp {
     // { title: 'Search', component: 'SearchPage' }
   ]
 
-  constructor(private translate: TranslateService, platform: Platform, settings: Settings, private config: Config, private statusBar: StatusBar, private splashScreen: SplashScreen) {
+  constructor(
+    private translate: TranslateService,
+    platform: Platform,
+    settings: Settings,
+    private config: Config,
+    private statusBar: StatusBar,
+    private splashScreen: SplashScreen,
+    private userService: User,
+  ) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -63,68 +71,13 @@ export class MyApp {
         this.nav.setRoot('WelcomePage');
       }
       else {
-        this.clearDatabase()
+        this.userService.clearDatabase()
         .then(() => {
-          console.log(">> DB CLEARED!!!!!!!!!");
 
           this.nav.setRoot('TabsPage');
         });
       }
     });
-  }
-
-  clearDatabase() {
-    const db = firebase.firestore();
-    const promises = []
-
-    const ps = [];
-
-    ps.push(
-      db.collection('likes').get()
-      .then((docs) => {
-        docs.forEach((doc) => {
-          promises.push(
-            db.collection('likes')
-            .doc(doc.id)
-            .delete()
-          )
-        });
-
-        return Promise.all(promises)
-      })
-    )
-
-    ps.push(
-      db.collection('quiz').get()
-      .then((docs) => {
-        docs.forEach((doc) => {
-          promises.push(
-            db.collection('quiz')
-            .doc(doc.id)
-            .delete()
-          )
-        });
-
-        return Promise.all(promises)
-      })
-    )
-
-    ps.push(
-      db.collection('chats').get()
-      .then((docs) => {
-        docs.forEach((doc) => {
-          promises.push(
-            db.collection('chats')
-            .doc(doc.id)
-            .delete()
-          )
-        });
-
-        return Promise.all(promises)
-      })
-    )
-
-    return Promise.all(ps)
   }
 
   initTranslate() {
