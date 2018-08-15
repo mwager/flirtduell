@@ -38,7 +38,6 @@
     <p>Correct answers: {{score.correctCount}} of 3</p>
 
     <button ion-button (click)="startNewGame()">New game</button>
-    <button ion-button (click)="startChat()">Start chat</button>
 
     <p *ngIf="enemyScore">{{enemyUser.name}} has {{enemyScore.correctCount}} of 3</p>
   </div>
@@ -49,15 +48,19 @@
     <div *ngIf="isAlice">
       <p *ngIf="score.correctCount > enemyScore.correctCount">you won, wanna chat with that looser?</p>
 
-      <p *ngIf="score.correctCount < enemyScore.correctCount">bob won ;) start chat?</p>
+      <p *ngIf="score.correctCount < enemyScore.correctCount">bob won ;) </p>
 
       <p *ngIf="score.correctCount === enemyScore.correctCount">undecided!
       </p>
+
+      <button ion-button (click)="startChat()">Start chat</button>
     </div>
 
     <div *ngIf="isBob">
       <pre>
-        <p *ngIf="score.correctCount > enemyScore.correctCount">you won, start chat?</p>
+        <p *ngIf="score.correctCount > enemyScore.correctCount">you won, start chat?
+          <button ion-button (click)="startChat()">Start chat</button>
+        </p>
 
         <p *ngIf="score.correctCount < enemyScore.correctCount">you are a looser, new game?</p>
 
