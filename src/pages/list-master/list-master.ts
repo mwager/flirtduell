@@ -1,11 +1,16 @@
 import { User } from './../../providers/user/user';
 import { SearchPage } from './../search/search';
 import { Component } from '@angular/core';
-import { IonicPage, ModalController, NavController, AlertController } from 'ionic-angular';
+import { IonicPage, ModalController, NavController, AlertController, ToastController } from 'ionic-angular';
 
 import { Item } from '../../models/item';
 import { Items } from '../../providers';
 declare var firebase;
+
+const users = {
+  nHrzjWOGvDM2QeXjUTOZVsXLnJ82: 'Alice',
+  uUiwVTzQ5RMJca9s4x7eHK0XLbC3: 'Bob'
+}
 
 @IonicPage()
 @Component({
@@ -15,9 +20,11 @@ declare var firebase;
 export class ListMasterPage {
   currentItems: Item[];
   unsubscribeLikes: any;
+  likeLength = 0;
 
   constructor(
     // private userService: User,
+    private toastCtrl: ToastController,
     public alertCtrl: AlertController,
     public navCtrl: NavController,
     public items: Items,
@@ -61,20 +68,34 @@ export class ListMasterPage {
     );
 
     const db = firebase.firestore();
-    this.unsubscribeLikes = db.collection("likes")
-    .onSnapshot((res) => {
-      if (res.docs.length === 2) {
-        this.displayMatchToast();
+    this.unsubscribeLikes = db.collection('flirtduell')
+    .doc('likes')
+    .onSnapshot((doc) => {
+      const user = firebase.auth().currentUser;
+      const data = doc.data();
+      console.log("data", data);
+
+      if (!data) {
         return;
       }
 
-      res.docs.forEach((doc) => {
-        const user = firebase.auth().currentUser;
+      if (data) {
+        this.likeLength++;
 
-        if (user.uid !== doc.id) {
-          console.log("GOT LIKE FROM USER ID! ", doc.id, doc.data());
+        if (this.likeLength === 2) {
+          this.displayMatchToast();
+          return;
         }
-      });
+      }
+
+      if (data && data.uid !== user.uid) {
+        let toast = this.toastCtrl.create({
+          message: 'You\'ve got a like from ' + data.fromUserName,
+          duration: 3000,
+          position: 'top'
+        });
+        toast.present();
+      }
     });
   }
 
@@ -155,8 +176,10 @@ export class ListMasterPage {
     const user = firebase.auth().currentUser;
     const db = firebase.firestore();
 
-    db.collection("likes").doc(user.uid)
+    db.collection("flirtduell")
+    .doc('likes')
     .set({
+      fromUserName: users[user.uid],
       email: user.email,
       uid: user.uid
     });
@@ -175,9 +198,6 @@ export class ListMasterPage {
       name = 'Alice'
     }
 
-    // TODO: wanna start a quiz?
-    // oder nun matches wo anzeigen... siehe tinder - wir brauchen tabs mit matches?
-
     let ctrl = this.alertCtrl.create({
       title: 'New Match!',
       subTitle: 'You got a new match with ' + name,
@@ -193,10 +213,11 @@ export class ListMasterPage {
         {
           text: 'Start quiz',
           handler: data => {
-            ctrl.dismiss()
-            .then(() => {
-              this.navCtrl.parent.select(1);
-            })
+            this.navCtrl.parent.select(1);
+            // ctrl.dismiss()
+            // .then(() => {
+
+            // })
           }
         }
       ]
