@@ -4,15 +4,15 @@ page-chat {
   }
 
   // THX TO: https://www.djamware.com/post/5a629d9880aca7059c142976/build-ionic-3-angular-5-and-firebase-simple-chat-app
-  ion-content {
-    background: url(../../assets/imgs/chat-back.png) no-repeat center center fixed;
-    background-size: cover;
-    height: 100%;
-    overflow: hidden;
-    .item-md, .item-ios {
-      background: none;
-    }
-  }
+  // ion-content {
+  //   // background: url(../../assets/imgs/chat-back.png) no-repeat center center fixed;
+  //   // background-size: cover;
+  //   // height: 100%;
+  //   // overflow: hidden;
+  //   // .item-md, .item-ios {
+  //   //   background: none;
+  //   // }
+  // }
   ion-footer {
     background: white;
     ion-icon {
