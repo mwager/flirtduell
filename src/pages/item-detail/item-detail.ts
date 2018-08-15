@@ -1,3 +1,4 @@
+import { ChatPage } from './../chat/chat';
 import { Component, NgZone, ApplicationRef } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 
@@ -80,6 +81,10 @@ const questionnaire = {
     ]
   }
 }
+const users = {
+  nHrzjWOGvDM2QeXjUTOZVsXLnJ82: 'Alice',
+  uUiwVTzQ5RMJca9s4x7eHK0XLbC3: 'Bob'
+}
 
 @IonicPage()
 @Component({
@@ -99,6 +104,9 @@ export class ItemDetailPage {
   isAlice = false;
   isBob = false
 
+  isDebugDisplayed = true;
+  dbDebugItems = [];
+
   constructor(private zone: NgZone, public toastCtrl: ToastController, public navCtrl: NavController, navParams: NavParams, items: Items, public applicationRef: ApplicationRef) {
     this.enemyUser = navParams.get('item'); // || items.defaultItem;
     this.score = {
@@ -110,13 +118,33 @@ export class ItemDetailPage {
     this.score = {
       correctCount: 0
     };
-    this.enemyScore = {};
+    this.enemyScore = null;
     this.selectedCategory = null;
     this.question = null;
     this.index = 0;
+
+    const db = firebase.firestore();
+    db.collection('quiz').get()
+    .then((docs) => {
+      docs.forEach((doc) => {
+        db.collection('quiz')
+        .doc(doc.id)
+        .delete()
+      });
+    });
+
+    this.dbDebugItems = [];
+  }
+
+  startChat() {
+    this.navCtrl.push(ChatPage);
   }
 
   ionViewDidLoad() {
+    this.startSubscription();
+  }
+
+  private startSubscription() {
     const db = firebase.firestore();
     const user = firebase.auth().currentUser;
 
@@ -130,12 +158,24 @@ export class ItemDetailPage {
     this.unsubscribeQuiz = db.collection("quiz")
     .onSnapshot((res) => {
       res.docs.forEach((doc) => {
+        // we log all to the view for debugging
+        this.dbDebugItems.push(users[doc.id] + ': ' + JSON.stringify(doc.data()));
+        console.log(this.dbDebugItems);
 
+        // wenn der datensatz von nem anderen user kommt
         if (user.uid !== doc.id) {
           console.log("GOT quiz score FROM USER ID! ", doc.id, doc.data());
 
           this.zone.run(() => {
-            this.enemyScore = doc.data();
+            const data = doc.data();
+
+            if (data.categorySelected) { // alice has selected a category
+              this.selectedCategory = data.categorySelected;
+              this.setFirstQuestion();
+            }
+            else {
+              this.enemyScore = data;
+            }
           });
         }
       });
@@ -150,12 +190,19 @@ export class ItemDetailPage {
 
   categorySelected(cat) {
     this.selectedCategory = cat;
+    this.setFirstQuestion();
 
+    const db = firebase.firestore();
+    const user = firebase.auth().currentUser;
+    db.collection("quiz").doc(user.uid)
+    .set({categorySelected: cat});
+  }
+
+  setFirstQuestion() {
     this.question = questionnaire[this.selectedCategory].question1;
     this.answers = questionnaire[this.selectedCategory].answers1;
 
-    this.applicationRef.tick()
-    console.log("this.question", this.question);
+    this.applicationRef.tick();
   }
 
   selectAnswer(answer) {

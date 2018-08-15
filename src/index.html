@@ -25,11 +25,11 @@
 
   <!-- un-comment this code to enable service worker -->
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(() => console.log('service worker installed'))
-        .catch(err => console.error('Error service worker: ', err));
-    }
+    // if ('serviceWorker' in navigator) {
+    //   navigator.serviceWorker.register('service-worker.js')
+    //     .then(() => console.log('service worker installed'))
+    //     .catch(err => console.error('Error service worker: ', err));
+    // }
   </script>
 
   <link href="build/main.css" rel="stylesheet">
@@ -41,16 +41,16 @@
     // TODO: see this: https://love2dev.com/blog/beforeinstallprompt/
     console.log("registering beforeinstallprompt....")
 
-    window.addEventListener("beforeinstallprompt", function(e) {
-      e.prompt();
+    // window.addEventListener("beforeinstallprompt", function(e) {
+    //   e.prompt();
 
 
-      // log the platforms provided as options in an install prompt
-      console.log('e.platforms', e.platforms); // e.g., ["web", "android", "windows"]
-      e.userChoice.then(function(outcome) {
-        console.log("outcome", outcome); // either "accepted" or "dismissed"
-      }, handleError);
-    });
+    //   // log the platforms provided as options in an install prompt
+    //   console.log('e.platforms', e.platforms); // e.g., ["web", "android", "windows"]
+    //   e.userChoice.then(function(outcome) {
+    //     console.log("outcome", outcome); // either "accepted" or "dismissed"
+    //   }, handleError);
+    // });
   </script>
 
   <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase.js"></script>

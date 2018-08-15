@@ -37,7 +37,7 @@ export class MyApp {
     // { title: 'Welcome', component: 'WelcomePage' },
     // { title: 'Tabs', component: 'TabsPage' },
     // { title: 'Cards', component: 'CardsPage' },
-    // { title: 'Content', component: 'ContentPage' },
+    { title: 'Chat', component: 'ChatPage' },
     // { title: 'Login', component: 'LoginPage' },
     // { title: 'Signup', component: 'SignupPage' },
     // { title: 'Master Detail', component: 'ListMasterPage' },
@@ -100,6 +100,21 @@ export class MyApp {
         docs.forEach((doc) => {
           promises.push(
             db.collection('quiz')
+            .doc(doc.id)
+            .delete()
+          )
+        });
+
+        return Promise.all(promises)
+      })
+    )
+
+    ps.push(
+      db.collection('chats').get()
+      .then((docs) => {
+        docs.forEach((doc) => {
+          promises.push(
+            db.collection('chats')
             .doc(doc.id)
             .delete()
           )
