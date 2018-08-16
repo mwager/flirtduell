@@ -46,7 +46,6 @@ export class LoginPage {
     .then((resp) => {
       loading.dismiss();
 
-      // this.navCtrl.push(MainPage);
       this.navCtrl.setRoot('TabsPage');
     });
   }
