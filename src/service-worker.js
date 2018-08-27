@@ -28,4 +28,6 @@ self.toolbox.router.any('/*', self.toolbox.fastest);
 
 // for any other requests go to the network, cache,
 // and then only use that cached resource if your user goes offline
-self.toolbox.router.default = self.toolbox.networkFirst;
+// https://forum.ionicframework.com/t/pwa-how-does-the-service-worker-know-when-i-deploy-new-files/75961/3
+// prod? self.toolbox.router.default = self.toolbox.networkFirst;
+self.toolbox.router.default = self.toolbox.fastest;

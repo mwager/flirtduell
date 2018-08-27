@@ -9,5 +9,8 @@
   <div padding>
     <button ion-button block>{{ 'SIGNUP' | translate }}</button>
     <button ion-button block (click)="login()" class="login">{{ 'LOGIN' | translate }}</button>
+
+    <button class="btn" ion-button full (click)="addToHome(event)" *ngIf="showBtn">Install</button>
+
   </div>
 </ion-content>

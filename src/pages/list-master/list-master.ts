@@ -172,8 +172,6 @@ export class ListMasterPage {
   }
 
   sendLike() {
-    console.log('send like...........');
-
     const user = firebase.auth().currentUser;
     const db = firebase.firestore();
 
