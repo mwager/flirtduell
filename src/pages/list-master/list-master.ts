@@ -7,11 +7,6 @@ import { Item } from '../../models/item';
 import { Items } from '../../providers';
 declare var firebase;
 
-const users = {
-  nHrzjWOGvDM2QeXjUTOZVsXLnJ82: 'Alice',
-  uUiwVTzQ5RMJca9s4x7eHK0XLbC3: 'Bob'
-}
-
 @IonicPage()
 @Component({
   selector: 'page-list-master',
@@ -23,7 +18,7 @@ export class ListMasterPage {
   likeLength = 0;
 
   constructor(
-    // private userService: User,
+    private userService: User,
     private toastCtrl: ToastController,
     public alertCtrl: AlertController,
     public navCtrl: NavController,
@@ -44,16 +39,15 @@ export class ListMasterPage {
     }
 
     // if we are alice, insert bob and ViceVersa
-    if (user && (user.uid === 'nHrzjWOGvDM2QeXjUTOZVsXLnJ82')) {
-      this.currentItems.splice(2, 0, {
+    if (user && (user.uid === 'I6l5qjt6NQWeRGmAYYEbCM2Zl8H3')) {
+      this.currentItems.splice(4, 0, {
         "name": "Bob",
         "profilePic": "assets/img/speakers/bob.png",
         isReal: true
       })
     }
-
-    if (user && (user.uid === 'uUiwVTzQ5RMJca9s4x7eHK0XLbC3')) {
-      this.currentItems.splice(2, 0, {
+    else {
+      this.currentItems.splice(4, 0, {
         "name": "Alice",
         "profilePic": "assets/img/speakers/alice.png",
         isReal: true
@@ -179,7 +173,7 @@ export class ListMasterPage {
     db.collection("flirtduell")
     .doc('likes')
     .set({
-      fromUserName: users[user.uid],
+      fromUserName: this.userService.users[user.uid],
       email: user.email,
       uid: user.uid
     });

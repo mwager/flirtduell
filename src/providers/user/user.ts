@@ -28,6 +28,11 @@ declare var firebase;
 export class User {
   _user: any;
 
+  users = {
+    'I6l5qjt6NQWeRGmAYYEbCM2Zl8H3': 'Alice',
+    '9kfj0hzJV7OXBjZx4CZilGnld7R2': 'Bob'
+  }
+
   constructor(public api: Api) { }
 
   /**
@@ -64,25 +69,35 @@ export class User {
 
   clearDatabase() {
     const db = firebase.firestore();
-    const promises = []
-
+    // const promises = []
     const ps = [];
 
-    // we only have ONE collection with docs for "likes", "quiz" and "chat"
-    ps.push(
-      db.collection('flirtduell').get()
-      .then((docs) => {
-        docs.forEach((doc) => {
-          promises.push(
-            db.collection('flirtduell')
-            .doc(doc.id)
-            .delete()
-          )
-        });
+    // we only have ONE collection with docs for "likes", "quiz" and "chats"
 
-        return Promise.all(promises)
-      })
+    ps.push(
+      db.collection('flirtduell').doc('likes').delete()
     )
+    ps.push(
+      db.collection('flirtduell').doc('quiz').delete()
+    )
+    ps.push(
+      db.collection('flirtduell').doc('chats').delete()
+    )
+
+    // ps.push(
+    //   db.collection('flirtduell').get()
+    //   .then((docs) => {
+    //     docs.forEach((doc) => {
+    //       promises.push(
+    //         db.collection('flirtduell')
+    //         .doc(doc.id)
+    //         .delete()
+    //       )
+    //     });
+
+    //     return Promise.all(promises)
+    //   })
+    // )
 
     return Promise.all(ps)
     .then(() => {

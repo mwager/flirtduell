@@ -15,7 +15,7 @@ export class LoginPage {
   // If you're using the username field with or without email, make
   // sure to add it to the type
   account: { email: string, password: string } = {
-    email: 'alice@mwager.de',
+    email: 'alice@example.com',
     password: '123456'
   };
 
@@ -47,6 +47,17 @@ export class LoginPage {
       loading.dismiss();
 
       this.navCtrl.setRoot('TabsPage');
+    })
+    .catch((error) => {
+      console.error(error);
+      loading.dismiss();
+
+      let toast = this.toastCtrl.create({
+        message: 'Login failed',
+        duration: 3000,
+        position: 'top'
+      });
+      toast.present();
     });
   }
 }

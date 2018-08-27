@@ -82,10 +82,6 @@ const questionnaire = {
     ]
   }
 }
-const users = {
-  nHrzjWOGvDM2QeXjUTOZVsXLnJ82: 'Alice',
-  uUiwVTzQ5RMJca9s4x7eHK0XLbC3: 'Bob'
-}
 
 @IonicPage()
 @Component({
@@ -176,7 +172,7 @@ export class ItemDetailPage {
       }
 
       // we log all to the view for debugging
-      this.dbDebugItems.push(users[data.uid] + ': ' + JSON.stringify(data));
+      this.dbDebugItems.push(this.userService.users[data.uid] + ': ' + JSON.stringify(data));
 
       // wenn der datensatz von nem anderen user kommt
       if (user.uid !== data.uid) {

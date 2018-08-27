@@ -56,7 +56,7 @@ export class ChatPage {
     const db = firebase.firestore();
     const user = firebase.auth().currentUser;
 
-    if (user && (user.uid === 'nHrzjWOGvDM2QeXjUTOZVsXLnJ82')) {
+    if (user && (user.uid === 'I6l5qjt6NQWeRGmAYYEbCM2Zl8H3')) {
       this.isAlice = true;
       this.userName = 'Alice';
       this.chatUser = 'Bob';
