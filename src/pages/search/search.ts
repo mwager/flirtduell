@@ -22,15 +22,14 @@ export class SearchPage {
     }
 
     // if we are alice, insert bob and ViceVersa
-    if (user && (user.uid === 'nHrzjWOGvDM2QeXjUTOZVsXLnJ82')) {
+    if (user && (user.uid === 'I6l5qjt6NQWeRGmAYYEbCM2Zl8H3')) {
       this.currentItems=[{
         "name": "Bob",
         "profilePic": "assets/img/speakers/bob.png",
         isReal: true
       }]
     }
-
-    if (user && (user.uid === 'uUiwVTzQ5RMJca9s4x7eHK0XLbC3')) {
+    else {
       this.currentItems=[{
         "name": "Alice",
         "profilePic": "assets/img/speakers/alice.png",

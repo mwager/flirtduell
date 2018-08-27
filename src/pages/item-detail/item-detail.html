@@ -32,6 +32,8 @@
         {{answer.text}}
       </button>
     </ion-list>
+
+    <progress-bar [progress]="loadProgress"></progress-bar>
   </div>
 
   <div *ngIf="question === null && selectedCategory !== null">

@@ -8,6 +8,7 @@ import { IonicStorageModule, Storage } from '@ionic/storage';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
+// import { ProgressBarComponent } from '../components/progress-bar/progress-bar';
 
 import { Items } from '../mocks/providers/items';
 import { Settings, User, Api } from '../providers';

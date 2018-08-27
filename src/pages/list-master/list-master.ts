@@ -127,6 +127,10 @@ export class ListMasterPage {
     // get the container
     var origin = document.querySelector('.cardcontainer'); // ev.target.parentNode.parentNode;
 
+    if (!origin) {
+      return;
+    }
+
     // remove the appropriate class
     // depending on the animation name
     if (ev.animationName === 'yay') {
@@ -160,17 +164,20 @@ export class ListMasterPage {
         .classList
         .add('current');
 
-        if (isReal)
+        if (ev.animationName === 'yay' && isReal) {
           this.sendLike();
+        }
       }
     }
   }
 
   sendLike() {
+    console.log('send like...........');
+
     const user = firebase.auth().currentUser;
     const db = firebase.firestore();
 
-    db.collection("flirtduell")
+    db.collection('flirtduell')
     .doc('likes')
     .set({
       fromUserName: this.userService.users[user.uid],

@@ -1,5 +1,5 @@
 import { User } from './../../providers/user/user';
-import { ChatPage } from './../chat/chat';
+// import { ChatPage } from './../chat/chat';
 import { Component, NgZone, ApplicationRef } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 
@@ -104,6 +104,9 @@ export class ItemDetailPage {
   isDebugDisplayed = true;
   dbDebugItems = [];
 
+  loadProgress = 0;
+  clearProgress: any;
+
   constructor(
     private userService: User,
     private zone: NgZone,
@@ -131,6 +134,7 @@ export class ItemDetailPage {
       this.selectedCategory = null;
       this.question = null;
       this.index = 0;
+      this.loadProgress = 100;
 
       this.applicationRef.tick();
     });
@@ -155,7 +159,7 @@ export class ItemDetailPage {
     const db = firebase.firestore();
     const user = firebase.auth().currentUser;
 
-    if (user && (user.uid === 'nHrzjWOGvDM2QeXjUTOZVsXLnJ82')) {
+    if (user && (user.uid === 'I6l5qjt6NQWeRGmAYYEbCM2Zl8H3')) {
       this.isAlice = true;
     }
     else {
@@ -171,8 +175,8 @@ export class ItemDetailPage {
         return;
       }
 
-      // we log all to the view for debugging
-      this.dbDebugItems.push(this.userService.users[data.uid] + ': ' + JSON.stringify(data));
+      // // we log all to the view for debugging
+      // this.dbDebugItems.push(this.userService.users[data.uid] + ': ' + JSON.stringify(data));
 
       // wenn der datensatz von nem anderen user kommt
       if (user.uid !== data.uid) {
@@ -182,9 +186,10 @@ export class ItemDetailPage {
           if (data.chatStarted) { // other user started the chat
             this.navCtrl.push('ChatPage');
           }
-          else if (data.categorySelected) { // alice has selected a category
+          else if (data.categorySelected) { // alice has selected a category, means bob can play now
             this.selectedCategory = data.categorySelected;
             this.setFirstQuestion();
+            this.startQuestionProgress();
           }
           else {
             this.enemyScore = data;
@@ -210,6 +215,8 @@ export class ItemDetailPage {
     db.collection('flirtduell')
     .doc('quiz')
     .set({categorySelected: cat, uid: user.uid});
+
+    this.startQuestionProgress();
   }
 
   setFirstQuestion() {
@@ -220,12 +227,19 @@ export class ItemDetailPage {
   }
 
   selectAnswer(answer) {
-    let message;
+    if (this.clearProgress) {
+      window.clearInterval(this.clearProgress);
+      this.loadProgress = 100;
+    }
 
+    let message;
     if (answer.isCorrect) {
       this.score.correctCount++;
 
       message = 'Correct!';
+    }
+    else if(answer.timeDone) {
+      message = 'Time over! Correct would be ' + this.answers.find((a) => a.isCorrect).text;
     }
     else {
       message = 'Wrong answer! Correct would be ' + this.answers.find((a) => a.isCorrect).text;
@@ -243,10 +257,14 @@ export class ItemDetailPage {
     if (this.index === 1) {
       this.question = questionnaire[this.selectedCategory].question2;
       this.answers = questionnaire[this.selectedCategory].answers2;
+
+      this.startQuestionProgress();
     }
     else if (this.index === 2) {
       this.question = questionnaire[this.selectedCategory].question3;
       this.answers = questionnaire[this.selectedCategory].answers3;
+
+      this.startQuestionProgress();
     }
     else {
       this.question = null; // display score
@@ -262,4 +280,17 @@ export class ItemDetailPage {
       .set(this.score);
     }
   }
+
+  startQuestionProgress() {
+    this.loadProgress = 100;
+
+    this.clearProgress = window.setInterval(() => {
+      this.loadProgress -= 1;
+
+      if (this.loadProgress === 0) {
+        this.selectAnswer({timeDone: true});
+      }
+    }, 100);
+  }
+
 }

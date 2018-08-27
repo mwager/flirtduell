@@ -1,3 +1,4 @@
+import { ProgressBarComponent } from './../../components/progress-bar/progress-bar';
 import { ChatPage } from './../chat/chat';
 import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -8,6 +9,7 @@ import { ItemDetailPage } from './item-detail';
 @NgModule({
   declarations: [
     ItemDetailPage,
+    ProgressBarComponent
   ],
   imports: [
     IonicPageModule.forChild(ItemDetailPage),
